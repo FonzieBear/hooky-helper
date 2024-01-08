@@ -23,12 +23,15 @@ def validateGuess(guess):
 
 def inputNames():
     names = []
-    while True:
-        name = input()
+    nameNum = 1
+    while nameNum <= 5:
+        name = input('%d. ' % nameNum)
         if name:
             names.append(name)
+            nameNum += 1
         else:
             break
+
     return names
 
 
@@ -36,23 +39,35 @@ def presentMenu(names):
     for i in range(len(names)):
         print('%d. %s' % ((i + 1), names[i]))
 
-    print('>> ',)
-    return int(input())
-
-
-def getWord(numLetters):
     while True:
-        print('Enter your 5-letter word: ',)
-        guess = input().upper()
+        try:
+            selection = int(input('>> '))
+            if selection < 1 or selection > len(names):
+                print('Please enter a valid number from 1 to %d' % (len(names)))
+            else:
+                return selection
+        except:
+            print('Please enter a valid number from 1 to %d' % (len(names)))
 
-        if validateGuess(guess, numLetters):
+
+def getWord():
+    while True:
+        guess = input('Enter your 5-letter word: ').upper()
+
+        if validateGuess(guess):
             return guess
 
 
 def main():
     # Ask for all the players
-    printHeader('Enter names on separate lines (empty to finish)')
-    names = inputNames()
+    while True:
+        printHeader('Enter names on separate lines (empty to finish)')
+        names = inputNames()
+        if len(names) < 4:
+            print('This game only supports 4 or 5 players!')
+            input()
+        else:
+            break
 
     numLetters = 20 // len(names)
     playerLetters = []
@@ -61,37 +76,37 @@ def main():
     for name in names:
         while True:
             printHeader('%s, enter your %d letters' % (name, numLetters))
-            letters = input().upper()
+            letters = input('>> ').upper()
             if len(letters) != numLetters:
-                print('Expected %d letters and got %d! Press enter to retry.' %
+                print('Expected %d letters and got %d!' %
                       (numLetters, len(letters)))
                 input()
             else:
                 playerLetters.append(letters)
                 break
 
-    print(names)
-    print(playerLetters)
+    names.append('(Quit)')
 
     # Ask for words
     while True:
         printHeader('Who do you want to ask a question to?')
         selectedIndex = presentMenu(names)
 
-        if selectedIndex < 1 or selectedIndex > len(names):
-            print('Invalid player!')
-            continue
+        if selectedIndex == len(names):
+            print('Thank you for playing!')
+            break
 
         letters = playerLetters[selectedIndex - 1]
 
-        guessedWord = getWord(numLetters)
+        guessedWord = getWord()
 
         count = 0
         for letter in guessedWord:
             if letter in letters:
                 count += 1
 
-        print('%s has %d of the letters in %s' % (name, count, guessedWord))
+        print('%s has %d of the letters in %s' %
+              (names[selectedIndex-1], count, guessedWord))
         input()
 
 
