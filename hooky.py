@@ -63,13 +63,18 @@ def main():
     while True:
         printHeader('Enter names on separate lines (empty to finish)')
         names = inputNames()
-        if len(names) < 4:
-            print('This game only supports 4 or 5 players!')
+        if len(names) < 3:
+            print('This game only supports 3 to 5 players!')
             input()
         else:
             break
 
-    numLetters = 20 // len(names)
+    lettersByPlayers = {
+        3: 7,
+        4: 5,
+        5: 4,
+    }
+    numLetters = lettersByPlayers[len(names)]
     playerLetters = []
 
     # Get each player's letters
